@@ -1,8 +1,22 @@
 # Dependencies
 node_modules/
+web/node_modules/
+
+# Environment variables
+.env
+.env.local
+.env.production.local
+.env.development.local
+
+# Build outputs
+dist/
+web/dist/
+
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
 
 # Runtime data
 pids
@@ -12,40 +26,13 @@ pids
 
 # Coverage directory used by tools like istanbul
 coverage/
-*.lcov
-
-# nyc test coverage
 .nyc_output
-
-# Grunt intermediate storage
-.grunt
-
-# Bower dependency directory
-bower_components
-
-# node-waf configuration
-.lock-wscript
-
-# Compiled binary addons
-build/Release
 
 # Dependency directories
 jspm_packages/
 
-# TypeScript cache
-*.tsbuildinfo
-
 # Optional npm cache directory
 .npm
-
-# Optional eslint cache
-.eslintcache
-
-# Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
 
 # Optional REPL history
 .node_repl_history
@@ -58,43 +45,50 @@ jspm_packages/
 
 # dotenv environment variables file
 .env
-.env.test
-.env.local
-.env.production
 
-# parcel-bundler cache
+# parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
 
-# Next.js build output
+# next.js build output
 .next
 
-# Nuxt.js build / generate output
+# nuxt.js build output
 .nuxt
-dist
 
-# Gatsby files
-.cache/
-public
+# vuepress build output
+.vuepress/dist
 
-# Storybook build outputs
-.out
-.storybook-out
+# Serverless directories
+.serverless
 
-# Temporary folders
-tmp/
-temp/
+# FuseBox cache
+.fusebox/
 
-# Logs
-logs
-*.log
+# DynamoDB Local files
+.dynamodb/
 
-# IDE
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
-# OS
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+
+# Vercel
+.vercel

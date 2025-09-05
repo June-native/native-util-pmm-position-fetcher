@@ -37,7 +37,7 @@ export class Multicall3 {
   async aggregate(calls, blockNumber = null) {
     try {
       const options = blockNumber ? { blockTag: blockNumber } : {};
-      const result = await this.contract.aggregate.staticCall(calls, options);
+      const result = await this.contract.aggregate.staticCall(calls, { ...options, value: 0 });
       return result;
     } catch (error) {
       console.error('Multicall aggregate failed:', error.message);
@@ -72,7 +72,7 @@ export class Multicall3 {
         }
       }
       
-      const result = await this.contract.aggregate3.staticCall(calls, options);
+      const result = await this.contract.aggregate3.staticCall(calls, { ...options, value: 0 });
       return result;
     } catch (error) {
       console.error('Multicall aggregate3 failed:', error.message);

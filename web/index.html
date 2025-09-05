@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMM Position Fetcher</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PMM Position Fetcher</h1>
+            <p>Query PMM positions across multiple chains</p>
+        </header>
+
+        <main>
+            <div class="form-section">
+                <h2>Query Parameters</h2>
+                <form id="queryForm">
+                    <div class="form-group">
+                        <label for="pmmAddress">PMM Address:</label>
+                        <input 
+                            type="text" 
+                            id="pmmAddress" 
+                            placeholder="0x0000000000000000000000000000000000000000"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="chainId">Chain ID:</label>
+                        <select id="chainId" required>
+                            <option value="">Select a chain</option>
+                            <option value="1">Ethereum (1)</option>
+                            <option value="56">BSC (56)</option>
+                            <option value="42161">Arbitrum (42161)</option>
+                            <option value="8453">Base (8453)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="targetBlock">Target Block (optional):</label>
+                        <input 
+                            type="number" 
+                            id="targetBlock" 
+                            placeholder="Leave empty for latest block"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="debugMode" checked>
+                            Enable debug mode (verbose output)
+                        </label>
+                    </div>
+
+                    <button type="submit" id="fetchButton">
+                        <span class="button-text">Fetch Positions</span>
+                        <span class="button-spinner" style="display: none;">⏳</span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="results-section">
+                <h2>Results</h2>
+                <div class="tabs">
+                    <button class="tab-button active" data-tab="positions">Positions</button>
+                    <button class="tab-button" data-tab="logs">Logs</button>
+                </div>
+
+                <div class="tab-content">
+                    <div id="positions-tab" class="tab-pane active">
+                        <div id="positionsOutput" class="output-container">
+                            <p class="placeholder">Click "Fetch Positions" to see results</p>
+                        </div>
+                    </div>
+
+                    <div id="logs-tab" class="tab-pane">
+                        <div id="logsOutput" class="output-container logs">
+                            <p class="placeholder">Debug logs will appear here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>

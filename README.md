@@ -1,6 +1,6 @@
 # Native Util PMM Position Fetcher
 
-A comprehensive Node.js utility for fetching PMM (Permanent Market Maker) positions across multiple blockchain networks using ethers.js.
+A comprehensive utility for fetching PMM (Permanent Market Maker) positions across multiple blockchain networks using ethers.js. Available as both a Node.js CLI tool and a modern web application.
 
 ## Features
 
@@ -10,7 +10,38 @@ A comprehensive Node.js utility for fetching PMM (Permanent Market Maker) positi
 - **Block-specific Queries**: Query positions at specific block heights
 - **Comprehensive Results**: Detailed position data with summaries
 - **CLI Interface**: Easy-to-use command-line tool
+- **Web UI**: Modern, responsive web interface
+- **Vercel Ready**: Deploy to Vercel with one click
 - **Error Handling**: Robust error handling and logging
+
+## Quick Start
+
+### Web UI (Recommended)
+
+1. **Deploy to Vercel** (One-click deployment):
+   [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/native-util-pmm-position-fetcher)
+
+2. **Or run locally**:
+   ```bash
+   git clone <repository-url>
+   cd native-util-pmm-position-fetcher
+   npm install
+   npm run web
+   ```
+   Open http://localhost:3000 in your browser.
+
+### CLI Tool
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd native-util-pmm-position-fetcher
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
 
 ## Prerequisites
 
@@ -46,6 +77,18 @@ BASE_CREDIT_VAULT_ADDRESS=0x...
 ```
 
 ## Usage
+
+### Web UI
+
+1. **Open the application** in your browser
+2. **Enter PMM Address**: Input the PMM trader address you want to query
+3. **Select Chain**: Choose from Ethereum, BSC, Arbitrum, or Base
+4. **Set Target Block** (optional): Leave empty for latest block, or enter a specific block number
+5. **Enable Debug Mode** (optional): Toggle for verbose logging output
+6. **Click "Fetch Positions"**: The app will query and display results
+7. **View Results**: 
+   - **Positions Tab**: Clean display of position data with formatted amounts
+   - **Logs Tab**: Real-time debug output and processing logs
 
 ### CLI Tool
 

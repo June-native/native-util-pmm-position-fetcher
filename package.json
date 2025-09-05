@@ -8,7 +8,12 @@
     "start": "node index.js",
     "dev": "node --watch index.js",
     "cli": "node cli.js",
-    "test": "node test.js"
+    "test": "node test.js",
+    "web": "vite --config web/vite.config.js",
+    "build": "vite build --config web/vite.config.js",
+    "preview": "vite preview --config web/vite.config.js",
+    "build:vercel": "cd web && npm run build",
+    "deploy": "vercel --prod"
   },
   "keywords": [
     "ethereum",
@@ -23,6 +28,9 @@
   "dependencies": {
     "dotenv": "^17.2.2",
     "ethers": "^6.8.1"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
