@@ -1,0 +1,30 @@
+{
+  "name": "native-util-pmm-position-fetcher",
+  "version": "1.0.0",
+  "description": "A utility for fetching PMM (Permanent Market Maker) positions using ethers.js",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "cli": "node cli.js",
+    "test": "node test.js"
+  },
+  "keywords": [
+    "ethereum",
+    "ethers",
+    "pmm",
+    "defi",
+    "position",
+    "fetcher"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "ethers": "^6.8.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
