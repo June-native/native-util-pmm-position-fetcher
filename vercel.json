@@ -1,9 +1,11 @@
 {
   "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "web/dist",
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/web/$1"
+      "dest": "/$1"
     }
   ],
   "functions": {
