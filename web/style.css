@@ -90,6 +90,14 @@ select:focus {
     box-shadow: 0 0 0 3px rgba(102, 102, 102, 0.1);
 }
 
+.form-hint {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: #718096;
+    font-style: italic;
+}
+
 .checkbox-label {
     display: flex;
     align-items: center;

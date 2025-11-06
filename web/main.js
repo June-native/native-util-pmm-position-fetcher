@@ -53,11 +53,20 @@ class PMMPositionFetcher {
   constructor() {
     this.providers = new Map();
     this.multicalls = new Map();
+    this.customRpcUrl = null;
+  }
+
+  setCustomRpcUrl(rpcUrl) {
+    this.customRpcUrl = rpcUrl;
+    // Clear cached providers when RPC URL changes
+    this.providers.clear();
+    this.multicalls.clear();
   }
 
   async getProvider(chainId) {
-    if (this.providers.has(chainId)) {
-      return this.providers.get(chainId);
+    const cacheKey = `${chainId}-${this.customRpcUrl || 'default'}`;
+    if (this.providers.has(cacheKey)) {
+      return this.providers.get(cacheKey);
     }
 
     const config = CHAIN_CONFIGS[chainId];
@@ -65,7 +74,9 @@ class PMMPositionFetcher {
       throw new Error(`Unsupported chain ID: ${chainId}`);
     }
 
-    const provider = new ethers.JsonRpcProvider(config.rpcUrl, chainId, {
+    const rpcUrl = this.customRpcUrl || config.rpcUrl;
+
+    const provider = new ethers.JsonRpcProvider(rpcUrl, chainId, {
       polling: false,
       staticNetwork: true,
       batchMaxCount: 1,
@@ -73,7 +84,7 @@ class PMMPositionFetcher {
       batchMaxSize: 1
     });
 
-    this.providers.set(chainId, provider);
+    this.providers.set(cacheKey, provider);
     return provider;
   }
 
@@ -464,9 +475,20 @@ class UI {
     const pmmAddress = document.getElementById('pmmAddress').value.trim();
     const chainId = parseInt(document.getElementById('chainId').value);
     const targetBlock = document.getElementById('targetBlock').value.trim();
+    const rpcUrl = document.getElementById('rpcUrl').value.trim();
     const debugMode = document.getElementById('debugMode').checked;
     
     const targetBlockNumber = targetBlock ? parseInt(targetBlock) : null;
+    
+    // Set custom RPC URL if provided
+    if (rpcUrl) {
+      this.fetcher.setCustomRpcUrl(rpcUrl);
+      if (debugMode) {
+        this.fetcher.log(`Using custom RPC URL: ${rpcUrl}`);
+      }
+    } else {
+      this.fetcher.setCustomRpcUrl(null);
+    }
     
     this.setLoading(true);
     this.clearOutputs();

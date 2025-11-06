@@ -48,6 +48,16 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="rpcUrl">Custom RPC URL (optional):</label>
+                        <input 
+                            type="text" 
+                            id="rpcUrl" 
+                            placeholder="Leave empty for default RPC"
+                        >
+                        <small class="form-hint">Override the default RPC URL for this chain</small>
+                    </div>
+
+                    <div class="form-group">
                         <label class="checkbox-label">
                             <input type="checkbox" id="debugMode" checked>
                             Enable debug mode (verbose output)
