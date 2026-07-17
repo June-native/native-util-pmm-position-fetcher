@@ -30,6 +30,34 @@ const CHAIN_CONFIGS = {
     creditVaultAddress: '0x74a4Cd023e5AfB88369E3f22b02440F2614a1367',
     multicall3Address: '0xcA11bde05977b3631167028862bE2a173976CA11',
     explorerUrl: 'https://basescan.org'
+  },
+  143: {
+    name: 'Monad',
+    rpcUrl: 'https://rpc.monad.xyz',
+    creditVaultAddress: '0xcD1D2D602C3e7394515DaAe96e4FFe16DE71e5B4',
+    multicall3Address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    explorerUrl: 'https://monadvision.com'
+  },
+  196: {
+    name: 'X Layer',
+    rpcUrl: 'https://rpc.xlayer.tech',
+    creditVaultAddress: '0x4Df7557734B382EB542BEa6c74786D398DF4CC19',
+    multicall3Address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    explorerUrl: 'https://www.oklink.com/xlayer'
+  },
+  2818: {
+    name: 'Morph',
+    rpcUrl: 'https://rpc.morphl2.io',
+    creditVaultAddress: '0x4Df7557734B382EB542BEa6c74786D398DF4CC19',
+    multicall3Address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    explorerUrl: 'https://explorer.morphl2.io'
+  },
+  4663: {
+    name: 'Robinhood',
+    rpcUrl: 'https://robinhoodchain.blockscout.com/api/eth-rpc',
+    creditVaultAddress: '0x57B8f68ef57Af2dB70BC9aAc891836661CA4cB51',
+    multicall3Address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    explorerUrl: 'https://robinhoodchain.blockscout.com'
   }
 };
 
