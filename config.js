@@ -54,6 +54,62 @@ export const CHAIN_CONFIGS = {
       symbol: 'ETH',
       decimals: 18
     }
+  },
+
+  // Monad
+  143: {
+    name: 'Monad',
+    rpcUrl: process.env.MONAD_RPC_URL || 'https://rpc.monad.xyz',
+    creditVaultAddress: process.env.MONAD_CREDIT_VAULT_ADDRESS || '0xcD1D2D602C3e7394515DaAe96e4FFe16DE71e5B4',
+    multicall3Address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    explorerUrl: 'https://monadvision.com',
+    nativeCurrency: {
+      name: 'Monad',
+      symbol: 'MON',
+      decimals: 18
+    }
+  },
+
+  // X Layer
+  196: {
+    name: 'X Layer',
+    rpcUrl: process.env.XLAYER_RPC_URL || 'https://rpc.xlayer.tech',
+    creditVaultAddress: process.env.XLAYER_CREDIT_VAULT_ADDRESS || '0x4Df7557734B382EB542BEa6c74786D398DF4CC19',
+    multicall3Address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    explorerUrl: 'https://www.oklink.com/xlayer',
+    nativeCurrency: {
+      name: 'OKB',
+      symbol: 'OKB',
+      decimals: 18
+    }
+  },
+
+  // Morph
+  2818: {
+    name: 'Morph',
+    rpcUrl: process.env.MORPH_RPC_URL || 'https://rpc.morphl2.io',
+    creditVaultAddress: process.env.MORPH_CREDIT_VAULT_ADDRESS || '0x4Df7557734B382EB542BEa6c74786D398DF4CC19',
+    multicall3Address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    explorerUrl: 'https://explorer.morphl2.io',
+    nativeCurrency: {
+      name: 'Ether',
+      symbol: 'ETH',
+      decimals: 18
+    }
+  },
+
+  // Robinhood Chain
+  4663: {
+    name: 'Robinhood',
+    rpcUrl: process.env.ROBINHOOD_RPC_URL || 'https://robinhoodchain.blockscout.com/api/eth-rpc',
+    creditVaultAddress: process.env.ROBINHOOD_CREDIT_VAULT_ADDRESS || '0x57B8f68ef57Af2dB70BC9aAc891836661CA4cB51',
+    multicall3Address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    explorerUrl: 'https://robinhoodchain.blockscout.com',
+    nativeCurrency: {
+      name: 'Ether',
+      symbol: 'ETH',
+      decimals: 18
+    }
   }
 };
 
@@ -67,7 +123,11 @@ export const DEFAULT_CONFIG = {
     ETH: 'https://eth.drpc.org',
     BSC: 'https://bsc.drpc.org',
     ARB: 'https://arbitrum.gateway.tenderly.co',
-    BASE: 'https://base.llamarpc.com'
+    BASE: 'https://base.llamarpc.com',
+    MONAD: 'https://rpc.monad.xyz',
+    XLAYER: 'https://rpc.xlayer.tech',
+    MORPH: 'https://rpc.morphl2.io',
+    ROBINHOOD: 'https://robinhoodchain.blockscout.com/api/eth-rpc'
   },
   
   // Default CreditVault addresses
@@ -75,7 +135,11 @@ export const DEFAULT_CONFIG = {
     ETH: '0xe3D41d19564922C9952f692C5Dd0563030f5f2EF',
     BSC: '0xBA8dB0CAf781cAc69b6acf6C848aC148264Cc05d',
     ARB: '0xbA1cf8A63227b46575AF823BEB4d83D1025eff09',
-    BASE: '0x74a4Cd023e5AfB88369E3f22b02440F2614a1367'
+    BASE: '0x74a4Cd023e5AfB88369E3f22b02440F2614a1367',
+    MONAD: '0xcD1D2D602C3e7394515DaAe96e4FFe16DE71e5B4',
+    XLAYER: '0x4Df7557734B382EB542BEa6c74786D398DF4CC19',
+    MORPH: '0x4Df7557734B382EB542BEa6c74786D398DF4CC19',
+    ROBINHOOD: '0x57B8f68ef57Af2dB70BC9aAc891836661CA4cB51'
   },
   
   // Request timeout in milliseconds
@@ -89,7 +153,11 @@ export const DEFAULT_CONFIG = {
     1: 12,    // Ethereum
     56: 3,    // BSC
     42161: 1, // Arbitrum
-    8453: 1   // Base
+    8453: 1,  // Base
+    143: 1,   // Monad
+    196: 1,   // X Layer
+    2818: 1,  // Morph
+    4663: 1   // Robinhood
   }
 };
 
