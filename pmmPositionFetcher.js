@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import { getChainConfig, isValidChainId } from './config.js';
 import { Multicall3, createContractCall, decodeResults } from './multicall.js';
+import { findBlockByTimestamp as findBlockByTimestampHelper } from './findBlockByTimestamp.js';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -612,6 +613,16 @@ export class PMMPositionFetcher {
   async getCurrentBlock(chainId) {
     const provider = await this.getProvider(chainId);
     return await provider.getBlockNumber();
+  }
+
+  /**
+   * Find the highest block on a chain whose timestamp is <= unixSeconds
+   */
+  async findBlockByTimestamp(chainId, unixSeconds, debug = false) {
+    const provider = await this.getProvider(chainId);
+    return findBlockByTimestampHelper(provider, unixSeconds, {
+      log: debug ? (message) => console.log(message) : undefined
+    });
   }
 
   /**

@@ -1,5 +1,6 @@
 // Import ethers for client-side use
 import { ethers } from 'ethers';
+import { findBlockByTimestamp as findBlockByTimestampHelper } from '../findBlockByTimestamp.js';
 
 // Chain configurations
 const CHAIN_CONFIGS = {
@@ -350,6 +351,13 @@ class PMMPositionFetcher {
     return positions;
   }
 
+  async findBlockByTimestamp(chainId, unixSeconds, debug = false) {
+    const provider = await this.getProvider(chainId);
+    return findBlockByTimestampHelper(provider, unixSeconds, {
+      log: debug ? (message) => this.log(message) : undefined
+    });
+  }
+
   async listPmmPositions(pmmAddress, chainId, targetBlock = null, debug = false) {
     const startTime = Date.now();
     
@@ -459,6 +467,10 @@ class PMMPositionFetcher {
     logEntry.innerHTML = `<span class="log-timestamp">[${timestamp}]</span><span class="log-message">${message}</span>`;
     
     const logsOutput = document.getElementById('logsOutput');
+    const placeholder = logsOutput.querySelector('.placeholder');
+    if (placeholder) {
+      placeholder.remove();
+    }
     logsOutput.appendChild(logEntry);
     logsOutput.scrollTop = logsOutput.scrollHeight;
   }
@@ -473,18 +485,156 @@ class PMMPositionFetcher {
 class UI {
   constructor() {
     this.fetcher = new PMMPositionFetcher();
+    this.lastResult = null;
     this.initializeEventListeners();
   }
 
   initializeEventListeners() {
     const form = document.getElementById('queryForm');
     const tabButtons = document.querySelectorAll('.tab-button');
+    const findBlockByTime = document.getElementById('findBlockByTime');
+    const targetTime = document.getElementById('targetTime');
     
     form.addEventListener('submit', (e) => this.handleSubmit(e));
+    findBlockByTime.addEventListener('change', () => this.syncBlockTimeInputs());
+    targetTime.addEventListener('input', () => this.updateTargetTimeHint());
+    document.getElementById('beginLastMonthBtn').addEventListener('click', () => {
+      this.fillTargetTime(this.lastMonthBoundary('start'));
+    });
+    document.getElementById('endLastMonthBtn').addEventListener('click', () => {
+      this.fillTargetTime(this.lastMonthBoundary('end'));
+    });
+    document.getElementById('exportCsvButton').addEventListener('click', () => this.exportCsv());
     
     tabButtons.forEach(button => {
       button.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
     });
+
+    this.syncBlockTimeInputs();
+    this.syncExportButton();
+  }
+
+  lastMonthBoundary(kind) {
+    const now = new Date();
+    const year = now.getUTCFullYear();
+    const month = now.getUTCMonth();
+    if (kind === 'start') {
+      return new Date(Date.UTC(year, month - 1, 1, 0, 0, 0));
+    }
+    return new Date(Date.UTC(year, month, 0, 23, 59, 59));
+  }
+
+  toDateTimeLocalValue(date) {
+    const pad = (value) => String(value).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  }
+
+  fillTargetTime(utcDate) {
+    const timeInput = document.getElementById('targetTime');
+    timeInput.value = this.toDateTimeLocalValue(utcDate);
+    this.updateTargetTimeHint();
+  }
+
+  escapeCsvField(value) {
+    const str = value == null ? '' : String(value);
+    if (/[",\n\r]/.test(str)) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  }
+
+  buildPositionsCsv(result) {
+    const headers = [
+      'chainId',
+      'chainName',
+      'pmmAddress',
+      'targetBlock',
+      'tokenSymbol',
+      'tokenAddress',
+      'lpTokenAddress',
+      'positionFormatted',
+      'position',
+      'decimals'
+    ];
+    const rows = result.positions.map((position) => [
+      result.chainId,
+      result.chainName,
+      result.pmmAddress,
+      result.targetBlock,
+      position.tokenSymbol,
+      position.tokenAddress,
+      position.lpTokenAddress || '',
+      position.positionFormatted,
+      position.position,
+      position.decimals
+    ]);
+    return [headers, ...rows]
+      .map((row) => row.map((field) => this.escapeCsvField(field)).join(','))
+      .join('\n');
+  }
+
+  exportCsv() {
+    if (!this.lastResult?.positions?.length) {
+      return;
+    }
+    const csv = this.buildPositionsCsv(this.lastResult);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const blockLabel = this.lastResult.targetBlock ?? 'latest';
+    link.href = url;
+    link.download = `pmm-positions-${this.lastResult.chainId}-${blockLabel}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  syncExportButton() {
+    const button = document.getElementById('exportCsvButton');
+    const hasResults = Boolean(this.lastResult?.positions?.length);
+    button.hidden = !hasResults;
+    button.disabled = !hasResults;
+  }
+
+  syncBlockTimeInputs() {
+    const useTime = document.getElementById('findBlockByTime').checked;
+    const blockGroup = document.getElementById('targetBlockGroup');
+    const timeGroup = document.getElementById('targetTimeGroup');
+    const blockInput = document.getElementById('targetBlock');
+    const timeInput = document.getElementById('targetTime');
+
+    blockGroup.classList.toggle('hidden', useTime);
+    timeGroup.classList.toggle('hidden', !useTime);
+    blockInput.disabled = useTime;
+    timeInput.disabled = !useTime;
+    document.getElementById('beginLastMonthBtn').disabled = !useTime;
+    document.getElementById('endLastMonthBtn').disabled = !useTime;
+
+    if (useTime) {
+      blockInput.value = '';
+    } else {
+      timeInput.value = '';
+    }
+
+    this.updateTargetTimeHint();
+  }
+
+  updateTargetTimeHint() {
+    const hint = document.getElementById('targetTimeUtcHint');
+    const timeValue = document.getElementById('targetTime').value;
+    if (!timeValue) {
+      hint.textContent = 'Leave empty for latest block. Time is your local timezone.';
+      return;
+    }
+
+    const localDate = new Date(timeValue);
+    if (Number.isNaN(localDate.getTime())) {
+      hint.textContent = 'Invalid time.';
+      return;
+    }
+
+    hint.textContent = `UTC equivalent: ${localDate.toISOString()}`;
   }
 
   switchTab(tabName) {
@@ -505,8 +655,10 @@ class UI {
     const targetBlock = document.getElementById('targetBlock').value.trim();
     const rpcUrl = document.getElementById('rpcUrl').value.trim();
     const debugMode = document.getElementById('debugMode').checked;
+    const useTime = document.getElementById('findBlockByTime').checked;
+    const targetTime = document.getElementById('targetTime').value;
     
-    const targetBlockNumber = targetBlock ? parseInt(targetBlock) : null;
+    let targetBlockNumber = targetBlock ? parseInt(targetBlock) : null;
     
     // Set custom RPC URL if provided
     if (rpcUrl) {
@@ -522,6 +674,22 @@ class UI {
     this.clearOutputs();
     
     try {
+      if (useTime && targetTime) {
+        const localDate = new Date(targetTime);
+        if (Number.isNaN(localDate.getTime())) {
+          throw new Error('Invalid target time');
+        }
+        const unixSeconds = Math.floor(localDate.getTime() / 1000);
+        if (debugMode) {
+          this.fetcher.log(`Resolving block for ${localDate.toLocaleString()} (${localDate.toISOString()})`);
+        }
+        const resolved = await this.fetcher.findBlockByTimestamp(chainId, unixSeconds, debugMode);
+        targetBlockNumber = resolved.number;
+        this.fetcher.log(
+          `Resolved block ${resolved.number} @ ${new Date(resolved.timestamp * 1000).toISOString()}`
+        );
+      }
+
       const result = await this.fetcher.listPmmPositions(
         pmmAddress, 
         chainId, 
@@ -529,10 +697,14 @@ class UI {
         debugMode
       );
       
+      this.lastResult = result;
       this.displayResults(result);
+      this.syncExportButton();
       this.showSuccess('Positions fetched successfully!');
       
     } catch (error) {
+      this.lastResult = null;
+      this.syncExportButton();
       this.showError(`Error: ${error.message}`);
     } finally {
       this.setLoading(false);
@@ -556,6 +728,8 @@ class UI {
   }
 
   clearOutputs() {
+    this.lastResult = null;
+    this.syncExportButton();
     document.getElementById('positionsOutput').innerHTML = '<p class="placeholder">Click "Fetch Positions" to see results</p>';
     document.getElementById('logsOutput').innerHTML = '<p class="placeholder">Debug logs will appear here</p>';
   }
@@ -563,12 +737,7 @@ class UI {
   displayResults(result) {
     const positionsOutput = document.getElementById('positionsOutput');
     
-    if (result.positions.length === 0) {
-      positionsOutput.innerHTML = '<p class="placeholder">No positions found for this address</p>';
-      return;
-    }
-
-    let html = `
+    const summaryHtml = `
       <div class="summary">
         <h3>Summary</h3>
         <div class="summary-grid">
@@ -581,12 +750,23 @@ class UI {
             <span>With Positions</span>
           </div>
           <div class="summary-item">
+            <strong>${result.targetBlock}</strong>
+            <span>Target Block</span>
+          </div>
+          <div class="summary-item">
             <strong>${result.summary.fetchTime}ms</strong>
             <span>Fetch Time</span>
           </div>
         </div>
       </div>
     `;
+
+    if (result.positions.length === 0) {
+      positionsOutput.innerHTML = `${summaryHtml}<p class="placeholder">No positions found for this address</p>`;
+      return;
+    }
+
+    let html = summaryHtml;
 
     result.positions.forEach(position => {
       const isPositive = !position.positionFormatted.startsWith('-');

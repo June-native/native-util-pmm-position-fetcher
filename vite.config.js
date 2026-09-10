@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { resolve } from 'path';
 
 export default defineConfig({
   root: 'web',
@@ -15,6 +16,9 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    open: true
+    open: true,
+    fs: {
+      allow: [resolve(__dirname)]
+    }
   }
 });

@@ -43,12 +43,34 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="findBlockByTime">
+                            Find block by time
+                        </label>
+                    </div>
+
+                    <div class="form-group" id="targetBlockGroup">
                         <label for="targetBlock">Target Block (optional):</label>
                         <input 
                             type="number" 
                             id="targetBlock" 
                             placeholder="Leave empty for latest block"
                         >
+                    </div>
+
+                    <div class="form-group hidden" id="targetTimeGroup">
+                        <label for="targetTime">Target Time (optional):</label>
+                        <input 
+                            type="datetime-local" 
+                            id="targetTime" 
+                            step="1"
+                            disabled
+                        >
+                        <div class="quick-time-buttons">
+                            <button type="button" id="beginLastMonthBtn" class="quick-time-button">Beginning of last month</button>
+                            <button type="button" id="endLastMonthBtn" class="quick-time-button">End of last month</button>
+                        </div>
+                        <small class="form-hint" id="targetTimeUtcHint">Leave empty for latest block. Time is your local timezone.</small>
                     </div>
 
                     <div class="form-group">
@@ -76,7 +98,10 @@
             </div>
 
             <div class="results-section">
-                <h2>Results</h2>
+                <div class="results-heading">
+                    <h2>Results</h2>
+                    <button type="button" id="exportCsvButton" class="export-button" hidden>Export CSV</button>
+                </div>
                 <div class="tabs">
                     <button class="tab-button active" data-tab="positions">Positions</button>
                     <button class="tab-button" data-tab="logs">Logs</button>
