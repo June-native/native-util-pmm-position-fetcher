@@ -526,7 +526,25 @@ class UI {
 
   toDateTimeLocalValue(date) {
     const pad = (value) => String(value).padStart(2, '0');
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}T${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:${pad(date.getUTCSeconds())}`;
+  }
+
+  parseTargetTimeAsUtc(value) {
+    const match = String(value).match(
+      /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?/
+    );
+    if (!match) {
+      return null;
+    }
+    const [, year, month, day, hour, minute, second] = match;
+    return new Date(Date.UTC(
+      Number(year),
+      Number(month) - 1,
+      Number(day),
+      Number(hour),
+      Number(minute),
+      Number(second || 0)
+    ));
   }
 
   fillTargetTime(utcDate) {
@@ -624,17 +642,17 @@ class UI {
     const hint = document.getElementById('targetTimeUtcHint');
     const timeValue = document.getElementById('targetTime').value;
     if (!timeValue) {
-      hint.textContent = 'Leave empty for latest block. Time is your local timezone.';
+      hint.textContent = 'Leave empty for latest block. Time is UTC.';
       return;
     }
 
-    const localDate = new Date(timeValue);
-    if (Number.isNaN(localDate.getTime())) {
+    const utcDate = this.parseTargetTimeAsUtc(timeValue);
+    if (!utcDate || Number.isNaN(utcDate.getTime())) {
       hint.textContent = 'Invalid time.';
       return;
     }
 
-    hint.textContent = `UTC equivalent: ${localDate.toISOString()}`;
+    hint.textContent = `UTC: ${utcDate.toISOString()}`;
   }
 
   switchTab(tabName) {
@@ -675,13 +693,13 @@ class UI {
     
     try {
       if (useTime && targetTime) {
-        const localDate = new Date(targetTime);
-        if (Number.isNaN(localDate.getTime())) {
+        const utcDate = this.parseTargetTimeAsUtc(targetTime);
+        if (!utcDate || Number.isNaN(utcDate.getTime())) {
           throw new Error('Invalid target time');
         }
-        const unixSeconds = Math.floor(localDate.getTime() / 1000);
+        const unixSeconds = Math.floor(utcDate.getTime() / 1000);
         if (debugMode) {
-          this.fetcher.log(`Resolving block for ${localDate.toLocaleString()} (${localDate.toISOString()})`);
+          this.fetcher.log(`Resolving block for ${utcDate.toISOString()}`);
         }
         const resolved = await this.fetcher.findBlockByTimestamp(chainId, unixSeconds, debugMode);
         targetBlockNumber = resolved.number;
